@@ -1,0 +1,134 @@
+services:
+  vpn:
+    image: ghcr.io/bubuntux/nordvpn
+    cap_add:
+      - NET_ADMIN        # Required for VPN functionality
+      - NET_RAW          # Required for VPN functionality
+    environment:          # Review https://github.com/bubuntux/nordvpn#environment-variables
+      - TOKEN=REDACTED  # Required - **REDACTED SENSITIVE DATA** - Replace with your NordVPN token
+      - CONNECT=United_States # Connect to a US server
+      - TECHNOLOGY=NordLynx # Use the NordLynx technology
+      - NETWORK=10.27.27.0/24 # Allow access within the local network
+    ports:
+      - 55879:55879      # Expose port 55879 (TCP)
+      - 55879:55879/udp  # Expose port 55879 (UDP)
+      - 48766:48766      # Expose port 48766 (TCP)
+      - 48766:48766/udp  # Expose port 48766 (UDP)
+      - 8090:8090        # Expose port 8090 for throwtorrent (qbittorrent)
+      - 5055:5055        # Expose port 5055 for Overseerr
+      - 8181:8181        # Expose port 8181 for Tautulli
+      - 9117:9117        # Expose port 9117 for Jackett
+      - 8989:8989        # Expose port 8989 for Sonarr
+      - 7878:7878        # Expose port 7878 for Radarr
+      - 8191:8191        # Expose port 8191 for Flaresolverr
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=1 # Recommended if using IPv4 only
+    healthcheck:
+      test: ping -c 1 www.google.com || exit 1 # Basic connectivity check
+      interval: 30s # Check every 30 seconds
+      timeout: 10s  # Timeout after 10 seconds
+      retries: 3    # Retry 3 times
+    restart: unless-stopped # Restart unless explicitly stopped
+
+  throwtorrent:
+    image: lscr.io/linuxserver/qbittorrent
+    container_name: throw_torrent
+    network_mode: "service:vpn" # Use the VPN network
+    environment:
+      - PUID=1000       # User ID
+      - PGID=1000       # Group ID
+      - TZ=US/Eastern   # Timezone
+      - WEBUI_PORT=8090 # qBittorrent Web UI port
+    volumes:
+      - /home/a/docker/throw_torrents/config:/config # Configuration volume
+      - /data/torrent:/data/torrent                # Torrent data volume
+    depends_on:
+      - vpn             # Start after the VPN container
+    restart: unless-stopped
+
+  overseerr:
+    image: sctx/overseerr:latest
+    container_name: overseerr
+    network_mode: "service:vpn" # Use the VPN network
+    environment:
+      - LOG_LEVEL=debug  # Log level
+      - TZ=US/Eastern  # Timezone
+      - PORT=5055       # Optional - Overseerr port
+    volumes:
+      - /home/a/docker/overseerr/config:/app/config # Configuration volume
+    depends_on:
+      - vpn             # Start after the VPN container
+    restart: unless-stopped
+
+  tautulli:
+    image: ghcr.io/tautulli/tautulli
+    container_name: tautulli
+    network_mode: "service:vpn" # Use the VPN network
+    environment:
+      - PUID=1000       # User ID
+      - PGID=1000       # Group ID
+      - TZ=US/Eastern   # Timezone
+    volumes:
+      - /home/a/docker/tautulli/config:/config # Configuration volume
+    depends_on:
+      - vpn             # Start after the VPN container
+    restart: unless-stopped
+
+  jackett:
+    image: lscr.io/linuxserver/jackett:latest
+    container_name: jackett
+    network_mode: "service:vpn" # Use the VPN network
+    environment:
+      - PUID=1000       # User ID
+      - PGID=1000       # Group ID
+      - TZ=US/Eastern   # Timezone
+      - AUTO_UPDATE=true # Optional - Enable auto-updates
+    volumes:
+      - /home/a/docker/jackett/data:/config # Configuration volume
+    depends_on:
+      - vpn             # Start after the VPN container
+    restart: unless-stopped
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    network_mode: "service:vpn" # Use the VPN network
+    environment:
+      - PUID=1000       # User ID
+      - PGID=1000       # Group ID
+      - TZ=US/Eastern   # Timezone
+    volumes:
+      - /home/a/docker/radarr/data:/config # Configuration volume
+      - /data:/data                      # Media data volume
+    depends_on:
+      - vpn             # Start after the VPN container
+    restart: unless-stopped
+
+  sonarr:
+    image: ghcr.io/hotio/sonarr:latest
+    container_name: sonarr
+    network_mode: "service:vpn" # Use the VPN network
+    environment:
+      - PUID=1000       # User ID
+      - PGID=1000       # Group ID
+      - UMASK=002       # Umask
+      - TZ=US/Eastern   # Timezone
+    volumes:
+      - /home/a/docker/sonarr/data:/config # Configuration volume
+      - /data:/data                      # Media data volume
+    depends_on:
+      - vpn             # Start after the VPN container
+    restart: unless-stopped
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    network_mode: "service:vpn" # Use the VPN network
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}    # Log level (default: info)
+      - LOG_HTML=${LOG_HTML:-false}   # Log HTML (default: false)
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none} # Captcha solver (default: none)
+      - TZ=US/Eastern   # Timezone
+    depends_on:
+      - vpn             # Start after the VPN container
+    restart: unless-stopped
