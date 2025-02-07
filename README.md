@@ -74,3 +74,7 @@ For each service, you'll need to modify the relevant **environment variables** t
 - **VPN Usage**: All services are routed through the VPN container, ensuring privacy and security.
 - **Port Exposure**: Only necessary ports are exposed. Adjust firewall rules to secure further.
 - **Sensitive Data**: Ensure the NordVPN token is kept secure and not publicly exposed.
+
+## ⚖️ Legal Disclaimer:
+This setup is intended for personal use and should only be used for downloading and streaming legally acquired content. By using these services, you agree to comply with all applicable laws and regulations. The repository creator is not responsible for any illegal activities or misuse of the system.
+
