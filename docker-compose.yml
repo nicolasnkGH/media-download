@@ -47,6 +47,22 @@ services:
       - vpn             # Start after the VPN container
     restart: unless-stopped
 
+  keeptorrent:
+    image: lscr.io/linuxserver/qbittorrent
+    container_name: keep_torrent
+    network_mode: "service:vpn"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Eastern
+      - WEBUI_PORT=8085
+    volumes:
+      - /home/a/docker/keep_torrents/config:/config
+      - /data/torrent:/data/torrent
+    depends_on:
+      - vpn
+    restart: unless-stopped
+
   overseerr:
     image: sctx/overseerr:latest
     container_name: overseerr
