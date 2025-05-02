@@ -23,6 +23,11 @@ This is a **self-hosted media and torrent stack** designed to offer secure acces
 - **qBittorrent (ThrowTorrent)**:
   - Web UI access through port `8090` for managing torrents.
   - Runs behind the VPN network for secure downloading.
+ 
+- **qBittorrent (keepTorrent) - Optional**:
+  - Web UI access through port `8085` for managing torrents.
+  - Runs behind the VPN network for secure downloading.
+  - Utilized to keep torrents for seeding quota purposes if needed.
 
 - **Overseerr**:
   - A media request system for managing media requests and interacting with Radarr and Sonarr.
@@ -41,6 +46,19 @@ This is a **self-hosted media and torrent stack** designed to offer secure acces
 
 - **Flaresolverr**:
   - A CAPTCHA solving service for use with various torrent providers or media indexers.
+ 
+- **Bazar**:
+  - Bazarr is a **subtitle management** tool that automatically downloads subtitles for TV shows and movies. It integrates with **Sonarr** and **Radarr** to automatically search for and download subtitles from various providers.
+
+#### Subtitle Providers Supported:
+Bazarr integrates with multiple subtitle providers to enhance the subtitle download experience:
+- **Addic7ed**: A popular provider offering subtitles for a wide range of TV shows.
+- **Animetosho**: A provider specializing in anime subtitles.
+- **EmbeddedSubtitles**: Extracts subtitles directly from media files without downloading them externally.
+- **OpenSubtitles**: A major subtitle provider with a large database of subtitles for movies and TV shows.
+- **SuperSubtitles**: A provider that offers subtitles for various TV shows and movies.
+- **TVSubtitles**: A subtitle provider focusing on TV shows.
+- **YifySubtitles**: A provider known for subtitles related to Yify torrents.
 
 ## 📝 Environment Variables
 
@@ -69,6 +87,7 @@ For each service, you'll need to modify the relevant **environment variables** t
 - `8989`: Sonarr
 - `7878`: Radarr
 - `8191`: Flaresolverr
+- `6767`: Bazarr
 
 ## 🔒 Security Considerations:
 - **VPN Usage**: All services are routed through the VPN container, ensuring privacy and security.
