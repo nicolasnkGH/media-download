@@ -21,6 +21,7 @@ services:
       - 8989:8989        # Expose port 8989 for Sonarr
       - 7878:7878        # Expose port 7878 for Radarr
       - 8191:8191        # Expose port 8191 for Flaresolverr
+      - 6767:6767
     sysctls:
       - net.ipv6.conf.all.disable_ipv6=1 # Recommended if using IPv4 only
     healthcheck:
@@ -132,3 +133,19 @@ services:
     depends_on:
       - vpn             # Start after the VPN container
     restart: unless-stopped
+ 
+  bazarr:
+    image: lscr.io/linuxserver/bazarr
+    container_name: bazarr
+    network_mode: "service:vpn"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Eastern
+    volumes:
+      - /home/a/docker/bazarr/config:/config
+      - /data:/data
+    depends_on:
+      - vpn
+    restart: unless-stopped
+
