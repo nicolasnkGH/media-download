@@ -21,7 +21,8 @@ services:
       - 8989:8989        # Expose port 8989 for Sonarr
       - 7878:7878        # Expose port 7878 for Radarr
       - 8191:8191        # Expose port 8191 for Flaresolverr
-      - 6767:6767
+      - 6767:6767        # Expose port 7878 for Bazarr
+      - 8686:8686        # Expose port 7878 for Lidarr
     sysctls:
       - net.ipv6.conf.all.disable_ipv6=1 # Recommended if using IPv4 only
     healthcheck:
@@ -160,6 +161,21 @@ services:
       - TZ=US/Eastern
     volumes:
       - /home/a/docker/bazarr/config:/config
+      - /data:/data
+    depends_on:
+      - vpn
+    restart: unless-stopped
+
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    network_mode: "service:vpn"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=US/Eastern
+    volumes:
+      - /home/a/docker/lidarr/config:/config
       - /data:/data
     depends_on:
       - vpn
