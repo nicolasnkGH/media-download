@@ -47,9 +47,12 @@ This is a **self-hosted media and torrent stack** designed to offer secure acces
 - **Flaresolverr**:
   - A CAPTCHA solving service for use with various torrent providers or media indexers.
  
+- **Lidarr**:
+  - Lidarr is a **music collection manager** for downloading and organizing audio files. It integrates with BitTorrent and Usenet download clients to automatically search for, download, and rename music from artists you track. It works similarly to Radarr and Sonarr, but specifically for albums and discographies.
+ 
 - **Bazar**:
   - Bazarr is a **subtitle management** tool that automatically downloads subtitles for TV shows and movies. It integrates with **Sonarr** and **Radarr** to automatically search for and download subtitles from various providers.
-
+ 
 #### Subtitle Providers Supported:
 Bazarr integrates with multiple subtitle providers to enhance the subtitle download experience:
 - **Addic7ed**: A popular provider offering subtitles for a wide range of TV shows.
@@ -59,6 +62,7 @@ Bazarr integrates with multiple subtitle providers to enhance the subtitle downl
 - **SuperSubtitles**: A provider that offers subtitles for various TV shows and movies.
 - **TVSubtitles**: A subtitle provider focusing on TV shows.
 - **YifySubtitles**: A provider known for subtitles related to Yify torrents.
+
 
 ## 📝 Environment Variables
 
@@ -88,6 +92,7 @@ For each service, you'll need to modify the relevant **environment variables** t
 - `7878`: Radarr
 - `8191`: Flaresolverr
 - `6767`: Bazarr
+- `8686`: Lidarr
 
 ## 🔒 Security Considerations:
 - **VPN Usage**: All services are routed through the VPN container, ensuring privacy and security.
